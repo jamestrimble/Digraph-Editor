@@ -25,20 +25,25 @@ svg {
     stroke-width: 1px;
     stroke: #444;
     fill: steelblue;
-    fill-opacity: 0.3;
+    fill-opacity: 0.45;
     cursor: pointer;
 }
 
 .node:hover {
-    fill-opacity: 0.6;
+    fill-opacity: 0.7;
 }
 
 circle.node-highlight {
-    fill-opacity: 0.9;
+    fill-opacity: 0.7;
 }
 
 circle.full-opacity {
     fill-opacity: 1;
+}
+
+circle.muted-circle {
+    fill-opacity: 0.15;
+    stroke-opacity: 0.4;
 }
 
 path {
@@ -48,9 +53,21 @@ path {
     cursor: pointer;
 }
 
+#end-arrow {
+    opacity:1;
+}
+
 .dashed-arrow {
     stroke-dasharray: 5, 5;
     visibility: hidden;
+}
+
+.arrow-muted {
+    stroke-opacity: 0.3;
+}
+
+.arrow-highlight {
+   /* stroke-opacity: 1;*/
 }
 
 #message {

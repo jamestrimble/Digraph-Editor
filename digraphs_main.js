@@ -15,11 +15,13 @@ var svg = d3.select("#svg-div")
     //.attr("width", width)
     .attr("height", height);
 
+// Arrow end marker
 // http://bl.ocks.org/rkirsling/5001347
 svg.append('svg:defs').append('svg:marker')
     .attr('id', 'end-arrow')
     .attr('viewBox', '0 -5 10 10')
     .attr('refX', 6)
+    .attr("class", "arrow-head")
     .attr('markerWidth', 5)
     .attr('markerHeight', 5)
     .attr('orient', 'auto')
@@ -27,14 +29,18 @@ svg.append('svg:defs').append('svg:marker')
     .attr('d', 'M0,-5L10,0L0,5')
     .attr('fill', '#000');
 
+// Just shown when an arrow is being drawn
 var dashedArrow = svg.append("path")
         .attr('class', 'dashed-arrow')
         .style('marker-end', 'url(#end-arrow)');
 
-    
+// The graph (in standard JSON format, with extra elements for the d3 circle selectors) 
 var G = {};
 var fullJson = {"data" : G};
 
+// Display the pretty-printed JSON,
+// highlight the connected components,
+// and show the list of circuits
 var displayJson = function() {
     $('#circuit-output').show();
     $('#json-output').show();
@@ -69,40 +75,59 @@ var displayJson = function() {
     
     d3.select('#circuit-output').selectAll('pre, p').remove();
     
+    // Add circuits, with listeners for highlighting on mouse-over
     if (circuits.length > 0) {
         d3.select('#circuit-output')
-                    .selectAll('pre')
-                    .data(circuits).enter()
-                    .append('pre')
-                    .attr('class', 'circuit-pre')
-                    .text(function(d) {return JSON.stringify(d)})
-                    .on('mouseover', function(d) {
-                        for (v in G) {
-                            console.log(v);
-                            console.log(d);
-                            if (d.indexOf(+v) != -1 ) {  // if this node is in the circuit
-                                G[v].svgCircle.classed('full-opacity', true);
-                            } 
-                        }
-                    })
-                    .on('mouseout', function(d) {
-                        d3.selectAll('.node').classed('full-opacity', false);
-                    });
+            .selectAll('pre')
+            .data(circuits).enter()
+            .append('pre')
+            .attr('class', 'circuit-pre')
+            .text(function(d) {return JSON.stringify(d)})
+            .on('mouseover', function(d) {
+                for (v in G) {
+                    if (d.indexOf(+v) != -1 ) {  // if this node is in the circuit
+                        G[v].svgCircle.classed('full-opacity', true);
+                    } else {
+                        G[v].svgCircle.classed('muted-circle', true);
+                    }
+                }
+                d3.selectAll(".arrow").classed("arrow-muted", true);
+                for (var i=0; i<d.length-1; i++) {
+                    var arrowStartId = d[i];
+                    var arrowEndId = d[i+1];
+                    d3.selectAll(".arrow")
+                        .filter(function() {return d3.select(this).attr("data-start-node") == arrowStartId})
+                        .filter(function() {return d3.select(this).attr("data-end-node") == arrowEndId})
+                           .classed("arrow-highlight", true)
+                           .classed("arrow-muted", false);
+                }
+            })
+            .on('mouseout', function(d) {
+                d3.selectAll("circle").classed('muted-circle', false);
+                d3.selectAll('.node').classed('full-opacity', false);
+                d3.selectAll(".arrow")
+                    .classed("arrow-highlight", false)
+                    .classed("arrow-muted", false);
+            });
     } else {
+        // If there are no circuits, show a short message
         d3.select('#circuit-output').append('p').text('None');
     }
     
 }
 
+// When the SVG is clicked on, add a circle
 svg.on("click", function() {
+    // If the Erase button is selected, don't do anything
     if ($("#erase").parent().hasClass("active")) {
         return;
     }
-    drawingArrow = false;
+    drawingArrow = false;     // We're not drawing an arrow (even if we had selected one point)
     dashedArrow.style("visibility", "hidden");
     $("#message").css("visibility", "hidden");
     d3.selectAll(".node").classed("node-highlight", false);
-    var coords = d3.mouse(svg[0][0]);
+    
+    var coords = d3.mouse(svg[0][0]);  // Mouse position on SVG
     var node = svg.append("circle")
         .attr("cx", coords[0])
         .attr("cy", coords[1])
@@ -111,24 +136,25 @@ svg.on("click", function() {
         
     var maxNodeId = 0;
     for (v in G) {
-        maxNodeId = Math.max(maxNodeId, +v);
+        maxNodeId = Math.max(maxNodeId, +v);    // Max ID of nodes created so far
     }
     
     var nodeId = maxNodeId + 1;
     node.attr('data-nodeid', nodeId);
-    var graphNode = G['' + nodeId] = {"matches": [], "svgCircle": node};
-
+    var graphNode = {"matches": [], "svgCircle": node};  // Add to the "JSON" graph
+    G['' + nodeId] = graphNode;
+    
     var nodeNumSvg = svg.append("text")
         .attr("x", coords[0])
         .attr("y", coords[1])
         .text(nodeId)
         .attr("class", "node-num");
         
-    displayJson();
+    displayJson();   // Re-run the algorithms with the new circle
     
     node.on("click", function() {
-        d3.event.stopPropagation();
-        if ($("#add_elements").parent().hasClass("active")) {
+        d3.event.stopPropagation();    // If a circle has been clicked, don't create a new circle
+        if ($("#add_elements").parent().hasClass("active")) {   // If we're in drawing mode, start creating an arrow
             if (!drawingArrow) {    // If first node of edge hasn't been clicked...
                 dashedArrow.style("visibility", "visible");
                 arrowStartNodeGlobal = graphNode;
@@ -173,13 +199,16 @@ svg.on("click", function() {
                     var arrow = svg.append("path")
                             .style("stroke", edgeColour(edgeWeight))
                             .style('marker-end', 'url(#end-arrow)')
-                            .attr('d', arrowPath);  
+                            .attr('d', arrowPath)
+                            .attr("class", "arrow")
+                            .attr("data-start-node", arrowStartNode.id)
+                            .attr("data-end-node", graphNode.id);  
                     arrowStartNode.matches.push({"recipient": nodeId, "score": edgeWeight});
                     displayJson();
 
                     arrow.on("click", function() {
-                        d3.event.stopPropagation();
                         if ($("#erase").parent().hasClass("active")) {
+                            d3.event.stopPropagation();
                             arrow.style("visibility", "hidden");
                             for (var i=0; i<arrowStartNode.matches.length; i++) {
                                 if (arrowStartNode.matches[i].recipient==nodeId) {
@@ -210,7 +239,7 @@ svg.on("click", function() {
 });
 
 svg.on("mousemove", function() {
-    if (drawingArrow) {
+    if (drawingArrow) {  // Move the dashed arrow
         var coords = d3.mouse(svg[0][0]);
         var edgeWeight = +$("#weight-input").val();
         dashedArrow
@@ -220,6 +249,8 @@ svg.on("mousemove", function() {
     }
 });
 
+
+// Run the algorithms on the second (paste JSON) tab
 $('#json-button').click(function() {
     var json = $('#json-input').val();
     try {
@@ -260,9 +291,9 @@ $('#json-button').click(function() {
 });
 
 
-d3.json("input_modified.json", function(data) {
+/*d3.json("input_modified.json", function(data) {
     var G2 = data.data;
     
 
 
-})
+})*/
