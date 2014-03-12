@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="tarjan.js"></script>
+        <script src="subgraph.js"></script>
+        <script src="johnson.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+        <link href="style.css" rel="stylesheet" type="text/css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    </head>
+    
+    <body>
+      <div class="container">
+
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#editor" data-toggle="tab">Directed graph editor</a></li>
+          <li><a href="#paste-json" data-toggle="tab">Paste JSON</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div class="tab-pane active" id="editor">
+            <h2>Directed graph editor</h2>
+            <p>
+                The vertices of each strongly connected component are displayed in a single colour.
+                Elementary circuits are listed below the graph.
+            </p>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="btn-group" data-toggle="buttons">
+                      <label class="btn btn-primary active">
+                        <input type="radio" name="options" id="add_elements"> Add
+                      </label>
+                      <label class="btn btn-primary">
+                        <input type="radio" name="options" id="erase"> Erase
+                      </label>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        <label for="weight-input" class="col-sm-3 control-label">Weight for new edges (1-10):</label>
+                        <div class="col-sm-2">
+                          <input class="form-control" id="weight-input" value="5"></input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="svg-div"></div>
+            <div class="alert alert-info" id="message"></div>
+            <h4 class="initially-hidden">Elementary circuits (mouse over list to highlight on graph)</h4>
+            <div id="circuit-output"></div>
+            <h4 class="initially-hidden">Graph in JSON format</h4>
+            <pre id="json-output"></pre>          
+          </div>
+          <div class="tab-pane" id="paste-json">
+            <h2>Paste JSON</h2>
+            <p>
+                Paste input below in JSON format (<a href="http://kidney.optimalmatching.com/api/input_format#json">API documentation</a>).
+            </p>
+            <textarea class="form-control" id="json-input" rows="10"></textarea>
+            <button type="button" class="btn btn-primary" id='json-button'>Find strongly connected components and circuits</button>
+            <div class="alert alert-warning" id="invalid-json-message">Invalid JSON</div>
+            <h4>Adjacency list</h4>
+            <p>An edge is added to each altruistic donor from each vertex not labelled as altruistic.</p>
+            <pre id='json-adjacency-list'></pre>
+            <h4>Strongly connected components</h4>
+            <pre id='json-components'></pre>
+            <h4>Elementary circuits</h4>
+            <pre id='json-circuits'></pre>
+          </div>
+        </div>
+      
+
+      </div>
+      
+      <script src="digraphs_main.js"></script>
+    </body>
+
+</html>
+    

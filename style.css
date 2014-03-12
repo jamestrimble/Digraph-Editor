@@ -1,0 +1,82 @@
+body {
+    padding-top: 8px;
+}
+
+#svg-div {
+    margin-top: 12px;
+    margin-bottom: 12px;
+    background: #eee;
+}
+
+#invalid-json-message {
+    visibility: hidden;
+}
+
+.initially-hidden {
+    display: none;
+}
+
+svg {
+    border: 1px solid #aaa;
+    width:100%;
+}
+
+.node {
+    stroke-width: 1px;
+    stroke: #444;
+    fill: steelblue;
+    fill-opacity: 0.3;
+    cursor: pointer;
+}
+
+.node:hover {
+    fill-opacity: 0.6;
+}
+
+circle.node-highlight {
+    fill-opacity: 0.9;
+}
+
+circle.full-opacity {
+    fill-opacity: 1;
+}
+
+path {
+    fill: none;
+    stroke: black;
+    stroke-width: 2px;
+    cursor: pointer;
+}
+
+.dashed-arrow {
+    stroke-dasharray: 5, 5;
+    visibility: hidden;
+}
+
+#message {
+    visibility:hidden;
+}
+
+#json-output {
+    display: none;
+}
+
+#circuit-output {
+    min-height: 40px;
+}
+
+.circuit-pre {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.node-num {
+    dominant-baseline: central;
+    text-anchor: middle;
+    pointer-events: none;
+}
+
+#json-button {
+    margin-top:8px;
+    margin-bottom:8px;
+}
