@@ -39,19 +39,13 @@ var johnson = function(G) {
             blocked[u] = false;
             for (var i=0,last=B[u].length; i<last; i++) {
                 w = B[u][i];
-                console.log("w " + w)
-                console.log("B[u] before " + JSON.stringify(B[u]))
                 B[u].splice(i, 1); // delete w from B[u]
-                console.log("B[u] after " + JSON.stringify(B[u]))
                 if (blocked[w]) { unblock(w); }
             }
         }
         var f = false;
         stack.push(v);
         blocked[v] = true;
-        
-        console.log("A_K");
-        console.log(A_K);
                
         A_K[v].forEach(function(w) {
             if (w==s) {
@@ -67,8 +61,6 @@ var johnson = function(G) {
             unblock(v);
         } else {
             A_K[v].forEach(function(w) {
-                console.log("B[w]");
-                console.log(JSON.stringify(B[w]));
                 if (B[w].indexOf(v) == -1) {
                     B[w].push(v);
                 }
@@ -95,29 +87,18 @@ var johnson = function(G) {
         //var subgraph_s = subgraph(G, s);
         var cc = tarjan(subgraph(G, s));
         
-        
-        
-        /*console.log("G2 :-)")
-        console.log(G);
-        console.log("subgraph...")
-        console.log(s);
-        console.log(subgraph(G, s));*/
-        console.log("cc")
-        console.log(JSON.stringify(cc, undefined,2));
+   
               
         if (cc.compWithLeastVertex != null) {
             var smallestCC = cc.components[cc.compWithLeastVertex];
             A_K = adjacencyStructure(smallestCC);
-        console.log("   A_K");
-        console.log(A_K);
-
 
             s = cc.leastVertexInAComp;
             for (v_id in A_K) {
                 blocked[+v_id] = false;
                 B[v_id] = [];
             }
-            //console.log(s);
+
             
             circuit(s);
             s += 1;
@@ -126,6 +107,5 @@ var johnson = function(G) {
         }
     }
     
-    console.log(JSON.stringify(circuits));
     return circuits;
 }
