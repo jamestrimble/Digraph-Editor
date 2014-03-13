@@ -21,15 +21,11 @@ var adjacencyStructure = function(cc) {
         }
     }
 
-        //console.log("A")
-        //console.log(JSON.stringify(A, undefined,2));
-
     return A;
 }
 
 
 var johnson = function(G) {
-    console.log("starting Johnson's algorithm")
 
     var A_K,       // an object of arrays
         B = {},    // B will be an object of arrays
@@ -37,8 +33,6 @@ var johnson = function(G) {
         stack = [],
         s = 1,
         circuits = [];   // The function's return value
-
-    console.log("abc")
         
     var circuit = function(v) {
         var unblock = function(u) {

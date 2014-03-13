@@ -65,13 +65,10 @@ var tarjan = function(G) {
     }
     
     for(v_id in G) {
-        //console.log("node " + v_id);
         if (!G[v_id].number) {
             strongConnect(G[v_id]);
         }
-        //console.log(G[v].id);
     }
-    //console.log({components: sccList, compWithLeastVertex: compWithLeastVertex});
     return {components: sccList,
             compWithLeastVertex: compWithLeastVertex,
             leastVertexInAComp: leastVertexInAComponentSoFar

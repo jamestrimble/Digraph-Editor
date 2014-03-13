@@ -69,8 +69,6 @@ var displayJson = function() {
     
     connectedComps = tarjan(G).components;
     
-    console.log(connectedComps);
-    
     var colourDomain = [];
     for (var i=0; i<connectedComps.length; i++) {
         colourDomain.push(i);
