@@ -56,6 +56,10 @@ path {
 #end-arrow {
     opacity:1;
 }
+.arrow-head-muted {
+    opacity: 0.15;
+}
+
 
 .dashed-arrow {
     stroke-dasharray: 5, 5;

@@ -17,17 +17,29 @@ var svg = d3.select("#svg-div")
 
 // Arrow end marker
 // http://bl.ocks.org/rkirsling/5001347
-svg.append('svg:defs').append('svg:marker')
-    .attr('id', 'end-arrow')
+var arrowHead = function(element) {
+    element
+    .attr("class", "arrow-head")
     .attr('viewBox', '0 -5 10 10')
     .attr('refX', 6)
-    .attr("class", "arrow-head")
     .attr('markerWidth', 5)
     .attr('markerHeight', 5)
     .attr('orient', 'auto')
   .append('svg:path')
     .attr('d', 'M0,-5L10,0L0,5')
-    .attr('fill', '#000');
+    .attr('fill', '#000');    
+}
+var svgDefs = svg.append('svg:defs');
+svgDefs.append('svg:marker')
+    .attr('id', 'end-arrow')
+    .call(arrowHead);
+// Light arrow end marker for un-highlighted circuits
+svgDefs.append('svg:marker')
+    .attr('id', 'end-arrow-muted')
+    .call(arrowHead)
+    .classed("arrow-head-muted", true);
+
+
 
 // Just shown when an arrow is being drawn
 var dashedArrow = svg.append("path")
@@ -91,7 +103,8 @@ var displayJson = function() {
                         G[v].svgCircle.classed('muted-circle', true);
                     }
                 }
-                d3.selectAll(".arrow").classed("arrow-muted", true);
+                d3.selectAll(".arrow").classed("arrow-muted", true)
+                        .style('marker-end', 'url(#end-arrow-muted)');
                 for (var i=0; i<d.length-1; i++) {
                     var arrowStartId = d[i];
                     var arrowEndId = d[i+1];
@@ -99,7 +112,8 @@ var displayJson = function() {
                         .filter(function() {return d3.select(this).attr("data-start-node") == arrowStartId})
                         .filter(function() {return d3.select(this).attr("data-end-node") == arrowEndId})
                            .classed("arrow-highlight", true)
-                           .classed("arrow-muted", false);
+                           .classed("arrow-muted", false)
+                           .style('marker-end', 'url(#end-arrow)');
                 }
             })
             .on('mouseout', function(d) {
@@ -107,7 +121,8 @@ var displayJson = function() {
                 d3.selectAll('.node').classed('full-opacity', false);
                 d3.selectAll(".arrow")
                     .classed("arrow-highlight", false)
-                    .classed("arrow-muted", false);
+                    .classed("arrow-muted", false)
+                    .style('marker-end', 'url(#end-arrow)');
             });
     } else {
         // If there are no circuits, show a short message
